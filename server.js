@@ -7,13 +7,14 @@ const { v4: uuidv4 } = require("uuid");
 const cors = require("cors"); // Import cors
 const fs = require("fs");
 const util = require("util");
+const fetch = require('node-fetch');
 
 const app = express();
 const port = process.env.PORT || 3306;
 
 app.use(cors()); // Enable CORS
 
-// app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, "build")));
 app.use("/log", express.static(path.join(__dirname, "log")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -3114,14 +3115,15 @@ console.log(logoPath);
   });
 });
 
-app.get('*', (req, res) => {
-  console.log(`${req.path}`);
-  res.redirect(301, `https://sea-pawn.netlify.app/${req.path}`);
-});
+// // Handle any other requests by serving the React app
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "build", "index.html"));
+// });
 
 app.get('/',(req,res) => {
   res.send("Hello World!")});
         
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
