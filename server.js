@@ -138,8 +138,7 @@ app.post("/regis", async (req, res) => {
   }
 
   const logoFileName = `${uuidv4()}.png`;
-  const logoPath = path.join(
-    "log",
+  const logoPath = path.join(__dirname, "log",
     logoFileName
   );
   console.log(logoFileName);
@@ -911,9 +910,7 @@ app.post("/upload-logo", (req, res) => {
   }
 
   const logoFileName = `${uuidv4()}.png`;
-  const logoPath = path.join(
-    __dirname,
-    "../sea_pawn_bk_end/src/log/",
+  const logoPath = path.join(__dirname, "log",
     logoFileName
   );
 
@@ -929,9 +926,7 @@ app.post("/upload-logo", (req, res) => {
     const oldLogoFileName = result[0].clogo;
 
     // Unlink the old logo file
-    const oldLogoPath = path.join(
-      __dirname,
-      "../sea_pawn_bk_end/src/log/",
+    const oldLogoPath = path.join(__dirname, "log",
       oldLogoFileName
     );
     fs.unlink(oldLogoPath, (unlinkErr) => {
@@ -2993,8 +2988,7 @@ app.post("/uploadImage", async (req, res) => {
       // If an existing image is found, delete it from the log folder
       const existingFileName = result[0].cust_pic;
       // const existingFilePath = `../sea_pawn_bk_end/src/log/${existingFileName}`;
-      const existingFilePath = path.join(
-        "log",
+      const existingFilePath = path.join(__dirname, "log",
         existingFileName
       );
 
@@ -3006,7 +3000,7 @@ app.post("/uploadImage", async (req, res) => {
         }
       });
     }
-    const filePath = path.join("log",fileName);
+    const filePath = path.join(__dirname, "log",fileName);
     console.log(filePath);
     uploadedFile.mv(filePath, async (err) => {
       if (err) {
