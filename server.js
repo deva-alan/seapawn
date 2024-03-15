@@ -3116,7 +3116,7 @@ console.log(logoPath);
 
 // Handle any other requests by serving the React app
 app.get('*', (req, res) => {
-  res.redirect('https://sea-pawn.netlify.app' + req.url);
+  res.redirect(301, `https://sea-pawn.netlify.app/${req.path}`);
 });
 
 app.get('/',(req,res) => {
