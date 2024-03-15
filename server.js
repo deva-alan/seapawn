@@ -19,23 +19,23 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(fileUpload());
 
-// Log requests
-app.use((req, res, next) => {
-  console.log(`Incoming request: ${req.method} ${req.url}`);
-  next();
-});
+// // Log requests
+// app.use((req, res, next) => {
+//   console.log(`Incoming request: ${req.method} ${req.url}`);
+//   next();
+// });
 
-// Redirect all requests to the frontend application
-app.get('*', (req, res) => {
-  console.log(`Redirecting request to frontend: ${req.url}`);
-  res.redirect(301, `https://sea-pawn.netlify.app${req.url}`);
-});
+// // Redirect all requests to the frontend application
+// app.get('*', (req, res) => {
+//   console.log(`Redirecting request to frontend: ${req.url}`);
+//   res.redirect(301, `https://sea-pawn.netlify.app${req.url}`);
+// });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err.stack);
-  res.status(500).send('Internal Server Error');
-});
+// // Error handling middleware
+// app.use((err, req, res, next) => {
+//   console.error('Error:', err.stack);
+//   res.status(500).send('Internal Server Error');
+// });
 
 const db = mysql.createConnection({
   host: "bjt2t3dfk762edhiobe9-mysql.services.clever-cloud.com",
