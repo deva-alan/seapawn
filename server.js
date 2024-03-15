@@ -7,7 +7,6 @@ const { v4: uuidv4 } = require("uuid");
 const cors = require("cors"); // Import cors
 const fs = require("fs");
 const util = require("util");
-const fetch = require('node-fetch');
 
 const app = express();
 const port = process.env.PORT || 3306;
