@@ -9,6 +9,15 @@ const fs = require("fs");
 const util = require("util");
 
 const app = express();
+const port = process.env.PORT || 3306;
+
+app.use(cors()); // Enable CORS
+
+// app.use(express.static(path.join(__dirname, 'build')));
+app.use("/log", express.static(path.join(__dirname, "log")));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(fileUpload());
 
 // Log requests
 app.use((req, res, next) => {
@@ -27,16 +36,6 @@ app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
   res.status(500).send('Internal Server Error');
 });
-
-const port = process.env.PORT || 3306;
-
-app.use(cors()); // Enable CORS
-
-// app.use(express.static(path.join(__dirname, 'build')));
-app.use("/log", express.static(path.join(__dirname, "log")));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(fileUpload());
 
 const db = mysql.createConnection({
   host: "bjt2t3dfk762edhiobe9-mysql.services.clever-cloud.com",
