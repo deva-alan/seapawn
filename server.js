@@ -13,7 +13,7 @@ const port = process.env.PORT || 3306;
 
 app.use(cors()); // Enable CORS
 
-app.use(express.static(path.join(__dirname, "build")));
+app.use(express.static(path.join(__dirname, 'build')));
 app.use("/log", express.static(path.join(__dirname, "log")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -3115,8 +3115,8 @@ console.log(logoPath);
 });
 
 // Handle any other requests by serving the React app
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.get('/',(req,res) => {
