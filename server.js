@@ -2976,7 +2976,7 @@ app.post("/saveClosingBalance", async (req, res) => {
 });
 
 // Function to upload file to GitHub repository
-async function uploadToGitHub(fileName, fileContent) {
+async function updateGitHubRepository(fileName, fileContent) {
     // GitHub repository details
     const owner = 'deva-alan';
     const repo = 'seapawn';
@@ -3052,12 +3052,13 @@ app.post("/uploadImage", async (req, res) => {
                 return res.status(500).json({ error: err.message });
             }
 
-            // Call function to upload file to GitHub
+            // Update GitHub repository
             try {
-                const githubUrl = await uploadToGitHub(fileName, fs.readFileSync(filePath));
-                console.log("Image uploaded to GitHub:", githubUrl);
+              const githubUrl = await updateGitHubRepository(fileName, uploadedFile.data);
+              console.log("Image uploaded to GitHub:", githubUrl);
             } catch (error) {
-                console.error("Error uploading file to GitHub:", error);
+              console.error("Error uploading file to GitHub:", error);
+              // Handle error (e.g., retry, log, notify)
             }
 
             // Update the pawn_ticket table with the new file name and specific pawn_ticket ID
