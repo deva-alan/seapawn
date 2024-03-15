@@ -2984,7 +2984,7 @@ async function uploadToGitHub(fileName, fileContent) {
     const filePath = `log/${fileName}`; // Assuming 'log' is the folder in your GitHub repository where you want to store images
 
     // API URL for GitHub content endpoint
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/tree/${filePath}`;
 
     // Authentication details
     const auth = {
