@@ -2984,20 +2984,17 @@ async function uploadToGitHub(fileName, fileContent) {
     const filePath = `log/${fileName}`; // Assuming 'log' is the folder in your GitHub repository where you want to store images
 
     // API URL for GitHub content endpoint
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/tree/${filePath}`;
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
 
-    // Authentication details
-    const auth = {
-        username: 'deva-alan',
-        password: 'dev2017alan', // Generate a personal access token with 'repo' scope
-    };
+    // Personal access token for authentication
+    const accessToken = 'your_personal_access_token'; // Replace with your actual personal access token
 
     // Make PUT request to upload file to GitHub
     const response = await fetch(apiUrl, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-            Authorization: `Basic ${Buffer.from(`${auth.username}:${auth.password}`).toString('base64')}`,
+            Authorization: `token ${accessToken}`, // Use token for authentication
         },
         body: JSON.stringify({
             message: 'Upload image',
