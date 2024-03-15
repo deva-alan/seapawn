@@ -2987,7 +2987,7 @@ async function updateGitHubRepository(fileName, fileContent) {
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
 
     // Personal access token for authentication
-    const accessToken = 'your_personal_access_token'; // Replace with your actual personal access token
+    const accessToken = 'seapawn'; // Replace with your actual personal access token
 
     // Make PUT request to upload file to GitHub
     const response = await fetch(apiUrl, {
