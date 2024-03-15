@@ -7,9 +7,10 @@ const { v4: uuidv4 } = require("uuid");
 const cors = require("cors"); // Import cors
 const fs = require("fs");
 const util = require("util");
+const fetch = require('node-fetch');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3306;
 
 app.use(cors()); // Enable CORS
 
@@ -20,10 +21,10 @@ app.use(bodyParser.json());
 app.use(fileUpload());
 
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "ffinance",
+  host: "bjt2t3dfk762edhiobe9-mysql.services.clever-cloud.com",
+  user: "uvyfcwiwgupkqf4f",
+  password: "fJukkMCfGShjdg6v1aC8",
+  database: "bjt2t3dfk762edhiobe9",
 });
 
 db.connect((err) => {
@@ -69,7 +70,7 @@ app.get("/company-logo", (req, res) => {
     }
 
     if (result.length > 0) {
-      const logoFileName = result[0].clogo;
+      const logoFileName = result[0].clogo || "seapawn_logo.png";
       console.log("logo", logoFileName);
       const logoPath = path.join(__dirname, "log", logoFileName); // Construct absolute path
       console.log("logo path", logoPath);
@@ -335,7 +336,7 @@ app.post("/submit-loan-application", async (req, res) => {
 
     // Insert data into the pawn_ticket table
     const insertQuery =
-      "INSERT INTO pawn_ticket (id, gl_no, gl_no_sl, gl_no_yr, dt, nm, place, addr, post_off, pincode, amt, pawn_intrest, aadhar, cust_mob, nomi_nm, nomi_rela, status, period_agree, third_mnth_interest_yes_or_no, third_mnth_interest_per_mnth, kootuvatti_yes_or_no, koottuvatti_intrest, aprox_value, tot_amt_with_kootuvatti, one_yr_amt, one_mnth_amt, one_day_amt, seven_day_amt, cmp_ln_no, cmp_off_mob, brch_id, cmp_nm, article, weight, cur_bala, third_mnth_start_dt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, current_date)";
+      "INSERT INTO pawn_ticket (id, gl_no, gl_no_sl, gl_no_yr, dt, nm, place, addr, post_off, pincode, amt, pawn_intrest, aadhar, cust_mob, nomi_nm, nomi_rela, status, period_agree, third_mnth_interest_yes_or_no, third_mnth_interest_per_mnth, kootuvatti_yes_or_no, koottuvatti_intrest, aprox_value, tot_amt_with_kootuvatti, one_yr_amt, one_mnth_amt, one_day_amt, seven_day_amt, cmp_ln_no, cmp_off_mob, brch_id, cmp_nm, article, weight, cur_bala, cust_pic, closed_dt, tot_paid, kootuvatti_amt, third_mnth_start_dt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', '0000-00-00', '0', '0', current_date)";
     const values = [
       newId, // Use the calculated newId
       formData.glNo,
@@ -412,7 +413,7 @@ app.post("/submit-loan-application", async (req, res) => {
     // Insert data into memb_article_list table
     for (let i = 0; i < articleDetailsArray.length; i++) {
       const insertArticleQuery =
-        "INSERT INTO memb_article_list (row_id, date, gl_no, arti, grm) VALUES (?, ?, ?, ?, ?)";
+        "INSERT INTO memb_article_list (row_id, date, gl_no, arti, grm, drop_stus, drop_dt, close_dt) VALUES (?, ?, ?, ?, ?, '', '0000-00-00', '0000-00-00')";
       let grmValue;
       if (i === 0) {
         // For the first iteration, insert remaining weight
@@ -913,7 +914,7 @@ app.post("/upload-logo", (req, res) => {
   const logoPath = path.join(__dirname, "log",
     logoFileName
   );
-
+console.log(logoPath);
   // Assuming you have logic to get the old logo filename from the database
   const getOldLogoQuery = "SELECT clogo FROM cmpany_details WHERE id = 1"; // Assuming you want to get the logo filename from the first row
 
@@ -2188,8 +2189,8 @@ app.post("/pay", async (req, res) => {
 
     if (artDetail === "adv") {
       paymentQuery = `
-        INSERT INTO payment_details (id, pawn_ticked_id, gl_no, name, mob, interest_perc, payable_amt, paid_date, mn, yr, interest, paid_amt, tot_paid, bal_amt, koottu_vatti, koottu_vatti_intrst, koottu_vatti_amt, koottu_vatti_intrst_amt)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO payment_details (id, pawn_ticked_id, gl_no, name, mob, interest_perc, payable_amt, paid_date, mn, yr, interest, paid_amt, tot_paid, bal_amt, koottu_vatti, koottu_vatti_intrst, koottu_vatti_amt, koottu_vatti_intrst_amt, article, weight, drop_article, drop_date, closed_stus, closed_dt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', '0', '', '0000-00-00', '', '0000-00-00')
       `;
       const paymentValues = [
         newId,
@@ -2492,8 +2493,8 @@ app.post("/pay", async (req, res) => {
         }
       } else {
         paymentQuery = `
-          INSERT INTO payment_details (id, pawn_ticked_id, gl_no, name, mob, interest_perc, payable_amt, paid_date, mn, yr, interest, paid_amt, tot_paid, bal_amt, koottu_vatti, koottu_vatti_intrst, koottu_vatti_amt, koottu_vatti_intrst_amt, article, weight, drop_article, drop_date)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          INSERT INTO payment_details (id, pawn_ticked_id, gl_no, name, mob, interest_perc, payable_amt, paid_date, mn, yr, interest, paid_amt, tot_paid, bal_amt, koottu_vatti, koottu_vatti_intrst, koottu_vatti_amt, koottu_vatti_intrst_amt, article, weight, drop_article, drop_date, closed_stus, closed_dt)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0000-00-00', '0000-00-00')
         `;
         const paymentValues = [
           newId,
@@ -2967,57 +2968,105 @@ app.post("/saveClosingBalance", async (req, res) => {
   }
 });
 
+// Function to upload file to GitHub repository
+async function uploadToGitHub(fileName, fileContent) {
+    // GitHub repository details
+    const owner = 'deva-alan';
+    const repo = 'seapawn';
+    const branch = 'main';
+    const filePath = `log/${fileName}`; // Assuming 'log' is the folder in your GitHub repository where you want to store images
+
+    // API URL for GitHub content endpoint
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+
+    // Authentication details
+    const auth = {
+        username: 'deva-alan',
+        password: 'dev2017alan', // Generate a personal access token with 'repo' scope
+    };
+
+    // Make PUT request to upload file to GitHub
+    const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${Buffer.from(`${auth.username}:${auth.password}`).toString('base64')}`,
+        },
+        body: JSON.stringify({
+            message: 'Upload image',
+            branch: branch,
+            content: Buffer.from(fileContent).toString('base64'),
+        }),
+    });
+
+    // Check response status
+    if (!response.ok) {
+        throw new Error(`Failed to upload file to GitHub. Status: ${response.status}`);
+    }
+
+    // Parse response data
+    const responseData = await response.json();
+    return responseData.content.download_url; // Return the URL of the uploaded image
+}
+
 // Route to handle file upload
 app.post("/uploadImage", async (req, res) => {
-  try {
-    if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).json({ error: "No files were uploaded." });
-    }
-
-    const uploadedFile = req.files.file;
-    const id = req.query.id;
-
-    const fileName = `${uuidv4()}_${uploadedFile.name}`;
-
-    // Fetch the current cust_pic value for the specified pawn_ticket ID
-    const selectQuery = "SELECT cust_pic FROM pawn_ticket WHERE id = ?";
-    const result = await queryAsync(selectQuery, [id]);
-
-    // Check if there is an existing image
-    if (result.length > 0 && result[0].cust_pic) {
-      // If an existing image is found, delete it from the log folder
-      const existingFileName = result[0].cust_pic;
-      // const existingFilePath = `../sea_pawn_bk_end/src/log/${existingFileName}`;
-      const existingFilePath = path.join(__dirname, "log",
-        existingFileName
-      );
-
-      fs.unlink(existingFilePath, (err) => {
-        if (err) {
-          console.error("Error deleting existing file:", err);
-        } else {
-          console.log("Existing file deleted successfully.");
+    try {
+        // Check if files were uploaded
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).json({ error: "No files were uploaded." });
         }
-      });
+
+        const uploadedFile = req.files.file;
+        const id = req.query.id;
+
+        const fileName = `${uuidv4()}_${uploadedFile.name}`;
+
+        // Fetch the current cust_pic value for the specified pawn_ticket ID
+        const selectQuery = "SELECT cust_pic FROM pawn_ticket WHERE id = ?";
+        const result = await queryAsync(selectQuery, [id]);
+
+        // Check if there is an existing image
+        if (result.length > 0 && result[0].cust_pic) {
+            // If an existing image is found, delete it from the log folder
+            const existingFileName = result[0].cust_pic;
+            const existingFilePath = path.join(__dirname, "log", existingFileName);
+
+            fs.unlink(existingFilePath, (err) => {
+                if (err) {
+                    console.error("Error deleting existing file:", err);
+                } else {
+                    console.log("Existing file deleted successfully.");
+                }
+            });
+        }
+
+        // Store the uploaded file locally
+        const filePath = path.join(__dirname, "log", fileName);
+        uploadedFile.mv(filePath, async (err) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            // Call function to upload file to GitHub
+            try {
+                const githubUrl = await uploadToGitHub(fileName, fs.readFileSync(filePath));
+                console.log("Image uploaded to GitHub:", githubUrl);
+            } catch (error) {
+                console.error("Error uploading file to GitHub:", error);
+            }
+
+            // Update the pawn_ticket table with the new file name and specific pawn_ticket ID
+            const updateQuery = "UPDATE pawn_ticket SET cust_pic = ? WHERE id = ?";
+            await queryAsync(updateQuery, [fileName, id]);
+
+            res.json({ fileName: fileName });
+            console.log(fileName);
+        });
+    } catch (error) {
+        console.error("Error uploading file:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
-    const filePath = path.join(__dirname, "log",fileName);
-    console.log(filePath);
-    uploadedFile.mv(filePath, async (err) => {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-
-      // Update the pawn_ticket table with the new file name and specific pawn_ticket ID
-      const updateQuery = "UPDATE pawn_ticket SET cust_pic = ? WHERE id = ?";
-      await queryAsync(updateQuery, [fileName, id]);
-
-      res.json({ fileName: fileName });
-      console.log(fileName);
-    });
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
 });
 
 // Route to update pawn_ticket table with the file name and pawn ticket ID
@@ -3100,6 +3149,7 @@ app.get("/custPic/:id", (req, res) => {
       }
 
       const logoPath = path.join(__dirname, "log", logoFileName);
+console.log(logoPath);
 
       // Send the image as a response
       res.sendFile(logoPath, (err) => {
@@ -3114,10 +3164,14 @@ app.get("/custPic/:id", (req, res) => {
   });
 });
 
-// Handle any other requests by serving the React app
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
+// // Handle any other requests by serving the React app
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "build", "index.html"));
+// });
+
+app.get('/',(req,res) => {
+  res.send("Hello World!")});
+        
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
