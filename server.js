@@ -3114,10 +3114,10 @@ console.log(logoPath);
   });
 });
 
-// // Handle any other requests by serving the React app
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "build", "index.html"));
-// });
+// Handle any other requests by serving the React app
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 app.get('/',(req,res) => {
   res.send("Hello World!")});
