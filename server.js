@@ -7,14 +7,6 @@ const { v4: uuidv4 } = require("uuid");
 const cors = require("cors"); // Import cors
 const fs = require("fs");
 const util = require("util");
-// To this dynamic import
-import('node-fetch').then(fetchModule => {
-  const fetch = fetchModule.default;
-  // Your code using fetch goes here
-}).catch(error => {
-  // Handle any errors that occur during the import
-  console.error('Error importing node-fetch:', error);
-});
 
 const app = express();
 const port = process.env.PORT || 3306;
@@ -2975,44 +2967,6 @@ app.post("/saveClosingBalance", async (req, res) => {
   }
 });
 
-// Function to upload file to GitHub repository
-async function updateGitHubRepository(fileName, fileContent) {
-    // GitHub repository details
-    const owner = 'deva-alan';
-    const repo = 'seapawn';
-    const branch = 'main';
-    const filePath = `log/${fileName}`; // Assuming 'log' is the folder in your GitHub repository where you want to store images
-
-    // API URL for GitHub content endpoint
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
-
-    // Personal access token for authentication
-    const accessToken = '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'; // Replace with your actual personal access token
-
-    // Make PUT request to upload file to GitHub
-    const response = await fetch(apiUrl, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `token ${accessToken}`, // Use token for authentication
-        },
-        body: JSON.stringify({
-            message: 'Upload image',
-            branch: branch,
-            content: Buffer.from(fileContent).toString('base64'),
-        }),
-    });
-
-    // Check response status
-    if (!response.ok) {
-        throw new Error(`Failed to upload file to GitHub. Status: ${response.status}`);
-    }
-
-    // Parse response data
-    const responseData = await response.json();
-    return responseData.content.download_url; // Return the URL of the uploaded image
-}
-
 // Route to handle file upload
 app.post("/uploadImage", async (req, res) => {
     try {
@@ -3050,15 +3004,6 @@ app.post("/uploadImage", async (req, res) => {
         uploadedFile.mv(filePath, async (err) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
-            }
-
-            // Update GitHub repository
-            try {
-              const githubUrl = await updateGitHubRepository(fileName, uploadedFile.data);
-              console.log("Image uploaded to GitHub:", githubUrl);
-            } catch (error) {
-              console.error("Error uploading file to GitHub:", error);
-              // Handle error (e.g., retry, log, notify)
             }
 
             // Update the pawn_ticket table with the new file name and specific pawn_ticket ID
