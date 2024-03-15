@@ -7,7 +7,14 @@ const { v4: uuidv4 } = require("uuid");
 const cors = require("cors"); // Import cors
 const fs = require("fs");
 const util = require("util");
-const fetch = require('node-fetch');
+// To this dynamic import
+import('node-fetch').then(fetchModule => {
+  const fetch = fetchModule.default;
+  // Your code using fetch goes here
+}).catch(error => {
+  // Handle any errors that occur during the import
+  console.error('Error importing node-fetch:', error);
+});
 
 const app = express();
 const port = process.env.PORT || 3306;
