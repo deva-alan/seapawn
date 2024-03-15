@@ -3115,9 +3115,22 @@ console.log(logoPath);
 });
 
 // Handle any other requests by serving the React app
+// Log requests
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
+
+// Redirect all requests to the frontend application
 app.get('*', (req, res) => {
-  console.log(`${req.path}`);
+  console.log(`Redirecting request to frontend: ${req.path}`);
   res.redirect(301, `https://sea-pawn.netlify.app/${req.path}`);
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err.stack);
+  res.status(500).send('Internal Server Error');
 });
 
 app.get('/',(req,res) => {
