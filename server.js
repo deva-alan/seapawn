@@ -2052,7 +2052,7 @@ app.post("/saveData", async (req, res) => {
       const item = values[i];
       const id = idValues[i];
       await queryAsync(
-        "INSERT INTO income_expence_bill_items (id, bill_no, item_nm, amt, qty, qty_amt, bill_amt, bill_kind, bill_dt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO income_expence_bill_items (id, bill_no, item_nm, amt, qty, qty_amt, bill_amt, bill_kind, bill_dt, pawn_ticket_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, '')",
         [
           id,
           bill_no,
@@ -2069,7 +2069,7 @@ app.post("/saveData", async (req, res) => {
 
     // After successful insertion, insert data into income_expence table
     await queryAsync(
-      "INSERT INTO income_expence (id, bill_no, bill_title, no_of_item, tot_amt, bill_dt, bill_typ, bill_kind) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO income_expence (id, bill_no, bill_title, no_of_item, tot_amt, bill_dt, bill_typ, bill_kind, pawn_ticket_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, '')",
       [
         newId,
         bill_no,
