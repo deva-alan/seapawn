@@ -1073,6 +1073,7 @@ app.put("/updateBranchStatus/:id", (req, res) => {
 
 app.post("/addBranch", (req, res) => {
   const branchData = req.body;
+console.log(branchData);
 
   // Get the current maximum id from the table
   db.query(
@@ -1167,7 +1168,7 @@ app.put("/updateBranch/:id", (req, res) => {
 
 app.post("/addStaff", (req, res) => {
   const staffData = req.body;
-
+console.log(staffData);
   // Get the current maximum id from the table
   db.query(
     'SELECT IFNULL(MAX(id), 0) + 1 AS next_id FROM login WHERE dept = "staff"',
