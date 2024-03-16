@@ -2071,7 +2071,7 @@ app.post("/saveData", async (req, res) => {
     await queryAsync(
       "INSERT INTO income_expence (id, bill_no, bill_title, no_of_item, tot_amt, bill_dt, bill_typ, bill_kind, pawn_ticket_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, '')",
       [
-        newId,
+        bill_no,
         bill_no,
         values1.billTitle,
         length,
