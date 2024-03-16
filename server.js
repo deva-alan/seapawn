@@ -1883,8 +1883,8 @@ console.log(date);
 
     // Check if a record already exists for the provided month and year
     const checkRecordQuery =
-      "SELECT * FROM opening_bala WHERE mnth = ? AND yr = ?";
-    db.query(checkRecordQuery, [month, year], (err, result) => {
+      "SELECT * FROM opening_bala WHERE dt = ?";
+    db.query(checkRecordQuery, [date], (err, result) => {
       if (err) {
         console.error("Error checking existing record:", err);
         return res.status(500).json({ error: "Internal Server Error" });
@@ -1893,7 +1893,7 @@ console.log(date);
       if (result.length > 0) {
         // Record already exists for the provided month and year
         return res.status(409).json({
-          message: "Deposit detail is already inserted for this month",
+          message: "Deposit detail is already inserted for this Date",
         });
       } else {
         // Insert data into the opening_bala table
