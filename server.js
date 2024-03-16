@@ -13,7 +13,7 @@ const port = process.env.PORT || 3306;
 
 app.use(cors()); // Enable CORS
 
-app.use(express.static(path.join(__dirname, "build")));
+// app.use(express.static(path.join(__dirname, "build")));
 app.use("/log", express.static(path.join(__dirname, "log")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
