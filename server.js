@@ -910,10 +910,8 @@ app.post("/upload-logo", (req, res) => {
   }
 
   const logoFileName = `${uuidv4()}.png`;
-  const logoPath = path.join(__dirname, "log",
-    logoFileName
-  );
-console.log(logoPath);
+  const logoPath = path.join(__dirname, "log", logoFileName);
+
   // Assuming you have logic to get the old logo filename from the database
   const getOldLogoQuery = "SELECT clogo FROM cmpany_details WHERE id = 1"; // Assuming you want to get the logo filename from the first row
 
@@ -925,16 +923,22 @@ console.log(logoPath);
 
     const oldLogoFileName = result[0].clogo;
 
-    // Unlink the old logo file
-    const oldLogoPath = path.join(__dirname, "log",
-      oldLogoFileName
-    );
-    fs.unlink(oldLogoPath, (unlinkErr) => {
-      if (unlinkErr) {
-        console.error("Error unlinking old logo file:", unlinkErr);
-        return res.status(500).json({ error: "Internal Server Error" });
-      }
+    if (oldLogoFileName) {
+      // Unlink the old logo file
+      const oldLogoPath = path.join(__dirname, "log", oldLogoFileName);
+      fs.unlink(oldLogoPath, (unlinkErr) => {
+        if (unlinkErr && unlinkErr.code !== "ENOENT") {
+          // Check if the file exists before unlinking
+          console.error("Error unlinking old logo file:", unlinkErr);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+        moveNewLogo();
+      });
+    } else {
+      moveNewLogo();
+    }
 
+    function moveNewLogo() {
       // Move the new logo file
       logoFile.mv(logoPath, async (mvErr) => {
         if (mvErr) {
@@ -957,7 +961,7 @@ console.log(logoPath);
             .json({ message: "Logo uploaded successfully" });
         });
       });
-    });
+    }
   });
 });
 
