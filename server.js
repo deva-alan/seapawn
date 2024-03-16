@@ -1846,7 +1846,7 @@ app.post("/updateArtData", async (req, res) => {
 // Route to handle the POST request from the React component
 app.post("/insertOpeningBalance", (req, res) => {
   const { amount, date, name } = req.body;
-
+console.log(date);
   // Validate input parameters
   if (!amount || !date || !name) {
     return res.status(400).json({ error: "Invalid input parameters" });
