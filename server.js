@@ -2978,7 +2978,9 @@ app.post("/saveClosingBalance", async (req, res) => {
 async function commitAndPush() {
   try {
     await git.add('.');
-    await git.commit('Added new image(s)');
+    await git.commit('Added new image(s)', {
+      '--author': '"deva-alan <devaalanj.mindtek@gmail.com>"'
+    });
     await git.push();
     console.log('Changes committed and pushed successfully.');
   } catch (error) {
