@@ -7,6 +7,8 @@ const { v4: uuidv4 } = require("uuid");
 const cors = require("cors"); // Import cors
 const fs = require("fs");
 const util = require("util");
+const simpleGit = require('simple-git');
+const git = simpleGit();
 
 const app = express();
 const port = process.env.PORT || 3306;
@@ -2972,6 +2974,18 @@ app.post("/saveClosingBalance", async (req, res) => {
   }
 });
 
+// Function to commit and push changes to the Git repository
+async function commitAndPush() {
+  try {
+    await git.add('.');
+    await git.commit('Added new image(s)');
+    await git.push();
+    console.log('Changes committed and pushed successfully.');
+  } catch (error) {
+    console.error('Error committing and pushing changes:', error);
+  }
+}
+
 // Route to handle file upload
 app.post("/uploadImage", async (req, res) => {
   try {
@@ -3014,7 +3028,7 @@ app.post("/uploadImage", async (req, res) => {
       // Update the pawn_ticket table with the new file name and specific pawn_ticket ID
       const updateQuery = "UPDATE pawn_ticket SET cust_pic = ? WHERE id = ?";
       await queryAsync(updateQuery, [fileName, id]);
-
+      await commitAndPush();
       res.json({ fileName: fileName });
       console.log(fileName);
     });
