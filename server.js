@@ -2974,54 +2974,58 @@ app.post("/saveClosingBalance", async (req, res) => {
 
 // Route to handle file upload
 app.post("/uploadImage", async (req, res) => {
-    try {
-        // Check if files were uploaded
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).json({ error: "No files were uploaded." });
-        }
-
-        const uploadedFile = req.files.file;
-        const id = req.query.id;
-
-        const fileName = `${uuidv4()}_${uploadedFile.name}`;
-
-        // Fetch the current cust_pic value for the specified pawn_ticket ID
-        const selectQuery = "SELECT cust_pic FROM pawn_ticket WHERE id = ?";
-        const result = await queryAsync(selectQuery, [id]);
-
-        // Check if there is an existing image
-        if (result.length > 0 && result[0].cust_pic) {
-            // If an existing image is found, delete it from the log folder
-            const existingFileName = result[0].cust_pic;
-            const existingFilePath = path.join(__dirname, "log", existingFileName);
-
-            fs.unlink(existingFilePath, (err) => {
-                if (err) {
-                    console.error("Error deleting existing file:", err);
-                } else {
-                    console.log("Existing file deleted successfully.");
-                }
-            });
-        }
-
-        // Store the uploaded file locally
-        const filePath = path.join(__dirname, "log", fileName);
-        uploadedFile.mv(filePath, async (err) => {
-            if (err) {
-                return res.status(500).json({ error: err.message });
-            }
-
-            // Update the pawn_ticket table with the new file name and specific pawn_ticket ID
-            const updateQuery = "UPDATE pawn_ticket SET cust_pic = ? WHERE id = ?";
-            await queryAsync(updateQuery, [fileName, id]);
-
-            res.json({ fileName: fileName });
-            console.log(fileName);
-        });
-    } catch (error) {
-        console.error("Error uploading file:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+  try {
+    // Check if files were uploaded
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).json({ error: "No files were uploaded." });
     }
+
+    const uploadedFile = req.files.file;
+    const id = req.query.id;
+
+    const fileName = `${uuidv4()}_${uploadedFile.name}`;
+
+    // Fetch the current cust_pic value for the specified pawn_ticket ID
+    const selectQuery = "SELECT cust_pic FROM pawn_ticket WHERE id = ?";
+    const result = await queryAsync(selectQuery, [id]);
+
+    // Check if there is an existing image
+    if (result.length > 0 && result[0].cust_pic) {
+      // If an existing image is found, delete it from the log folder
+      const existingFileName = result[0].cust_pic;
+      const existingFilePath = path.join(__dirname, "log", existingFileName);
+
+      fs.unlink(existingFilePath, (err) => {
+        if (err) {
+          console.error("Error deleting existing file:", err);
+        } else {
+          console.log("Existing file deleted successfully.");
+        }
+      });
+    }
+
+    // Store the uploaded file locally
+    const filePath = path.join(__dirname, "log", fileName);
+    uploadedFile.mv(filePath, async (err) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      // Update the pawn_ticket table with the new file name and specific pawn_ticket ID
+      const updateQuery = "UPDATE pawn_ticket SET cust_pic = ? WHERE id = ?";
+      await queryAsync(updateQuery, [fileName, id]);
+
+      // Push the changes to Git repository
+      const git = simpleGit();
+      await git.add('./*').commit(`Added image ${fileName}`).push('origin', 'master');
+
+      res.json({ fileName: fileName });
+      console.log(fileName);
+    });
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 // Route to update pawn_ticket table with the file name and pawn ticket ID
