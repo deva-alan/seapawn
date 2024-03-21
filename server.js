@@ -2627,8 +2627,8 @@ app.post("/deletePayment", async (req, res) => {
     
     console.log("formattedPaidDate",formattedPaidDate);
 
-    // Adjust the date by adding one day
-    formattedPaidDate.setDate(formattedPaidDate.getDate());
+    // // Adjust the date by adding one day
+    // formattedPaidDate.setDate(formattedPaidDate.getDate());
 
     // Convert the adjusted date to ISO string and extract the date part
     const paidDate = formattedPaidDate.toISOString().split("T")[0];
