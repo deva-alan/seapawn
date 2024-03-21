@@ -2624,14 +2624,14 @@ app.post("/deletePayment", async (req, res) => {
 
     // Get the paid date from the request body
     const formattedPaidDate = new Date(deletedPayment.paid_date);
+    console.log("formattedPaidDate",formattedPaidDate);
 
     // Adjust the date by adding one day
     formattedPaidDate.setDate(formattedPaidDate.getDate() + 1);
 
     // Convert the adjusted date to ISO string and extract the date part
     const paidDate = formattedPaidDate.toISOString().split("T")[0];
-
-    console.log(paidDate);
+    console.log("paidDate",paidDate);
     // 1st query: Delete payment_details
     const sql1 =
       "DELETE FROM payment_details WHERE pawn_ticked_id = ? AND id = ? AND DATE(paid_date) = ? AND paid_amt = ?";
